@@ -7,6 +7,7 @@ define quobyte::profile::disks::partition () {
     provider => shell,
     path     => ['/sbin/', '/usr/sbin/'],
     require  => Class['quobyte::profile::common::gdisk'],
+    creates  => "/dev/${name}1",
     unless   => "blkid /dev/${name}1",
   }
 

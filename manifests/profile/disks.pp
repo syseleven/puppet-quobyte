@@ -1,5 +1,5 @@
 class quobyte::profile::disks (
-  $disks = [],
+  $disks = undef,
 ) {
 
   include quobyte::profile::common::sysfsutils
