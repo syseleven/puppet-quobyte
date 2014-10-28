@@ -1,0 +1,103 @@
+#!/usr/bin/env python2
+# 2014 Maik Zumstrull <m.zumstrull@syseleven.de>
+
+import argparse
+import itertools
+import jsonrpclib
+import logging
+import os
+import re
+
+
+PARSER = argparse.ArgumentParser()
+PARSER.add_argument("-v", "--verbose", action="count")
+PARSER.add_argument("-u", "--endpoint", required=True)
+PARSER.add_argument("--tags", "-t")
+PARSER.add_argument("mountpoint", nargs="*")
+FLAGS = None
+LOG = logging.getLogger(__name__)
+
+
+class Error(Exception):
+    pass
+
+
+# Super-dirty HACK to start us off
+_id_ctr = itertools.count(1)
+
+def _not_so_random_id():
+    return next(_id_ctr)
+
+jsonrpclib.jsonrpc.random_id = _not_so_random_id
+# End of HACK
+
+
+# Initialized in main() after flag parsing
+server = None
+
+
+def ReadDeviceId(mountpoint):
+    with open(os.path.join(mountpoint, "QUOBYTE_DEV_ID")) as f:
+        for l in f:
+            m = re.match(r"device.id=(\d+)", l)
+            if m:
+                device_id = long(m.group(1))
+                LOG.debug("Device ID for %s is %d", mountpoint, device_id)
+                return device_id
+    raise Error("Device ID not found")
+
+
+def GetDeviceRecord(device_id):
+    response = server.getDeviceList({"GetDeviceRequest": {"device_id": [device_id]}})
+    record = response[u"quobyte.json.GetDeviceListResponse"][u"device_list"][u"devices"][0]
+    return record
+
+
+def EnsureTags(device_id, tags):
+    device_record = GetDeviceRecord(device_id)
+    existing_tags = device_record[u"device_tags"]
+    LOG.debug("Current tags on device %d: \"%s\"",
+        device_id, ", ".join(sorted(existing_tags)))
+    diff = set(tags) - set(existing_tags)
+    if diff:
+        LOG.info("Will attempt to add tags \"%s\" to device %d",
+            ", ".join(sorted(diff)), device_id)
+        _ = server.updateDevice({
+              "UpdateDeviceRequest": {
+              "device_id": device_id,
+              "update_device_tags": True,
+              "device_tags": sorted(tags + existing_tags),
+            }
+          })
+        LOG.info("Tags set.")
+    else:
+        LOG.info("No additional tags need to be set")
+
+
+def SetLogLevel():
+    logging.basicConfig()
+    root = logging.getLogger()
+    if FLAGS.verbose >= 2:
+        root.setLevel(logging.DEBUG)
+        return
+    if FLAGS.verbose >= 1:
+        root.setLevel(logging.INFO)
+        return
+
+
+def main():
+    LOG.debug("Creating RPC server proxy for %s", FLAGS.endpoint)
+    global server
+    server = jsonrpclib.Server(FLAGS.endpoint)
+    for mp in FLAGS.mountpoint:
+        LOG.info("Trying mountpoint %s", mp)
+        device_id = ReadDeviceId(mp)
+        if FLAGS.tags:
+            tags = re.split(r"\s*,\s*", FLAGS.tags)
+            EnsureTags(device_id, tags)
+
+
+if __name__ == "__main__":
+    FLAGS = PARSER.parse_args()
+    SetLogLevel()
+    main()

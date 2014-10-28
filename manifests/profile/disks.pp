@@ -2,7 +2,8 @@ class quobyte::profile::disks (
   $disks = undef,
 ) {
 
-  include quobyte::profile::common::sysfsutils
+  require quobyte::profile::common::sysfsutils
+  require quobyte::profile::common::tools
 
   define quobyte_device () {
 
@@ -35,7 +36,10 @@ class quobyte::profile::disks (
       dump    => 0,
       pass    => 2,
     } ->
-    quobyte::profile::disks::qmkdev { $mountpoint: }
+    quobyte::profile::disks::qmkdev { $mountpoint: } ->
+    quobyte::profile::disks::qtags { $mountpoint:
+      rotational => $rotational,
+    }
 
     # If the device has a scheduler (not a virtual device),
     # set a very long queue length for Quobyte performance

@@ -1,4 +1,6 @@
-class quobyte::profile::server {
+class quobyte::profile::server (
+  $api_service = undef,
+) {
 
   require quobyte::profile::common::repo
   require quobyte::profile::common::java8
