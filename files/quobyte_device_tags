@@ -22,16 +22,6 @@ class Error(Exception):
     pass
 
 
-# Super-dirty HACK to start us off
-_id_ctr = itertools.count(1)
-
-def _not_so_random_id():
-    return next(_id_ctr)
-
-jsonrpclib.jsonrpc.random_id = _not_so_random_id
-# End of HACK
-
-
 # Initialized in main() after flag parsing
 server = None
 
@@ -48,8 +38,8 @@ def ReadDeviceId(mountpoint):
 
 
 def GetDeviceRecord(device_id):
-    response = server.getDeviceList({"GetDeviceRequest": {"device_id": [device_id]}})
-    record = response[u"quobyte.json.GetDeviceListResponse"][u"device_list"][u"devices"][0]
+    response = server.getDeviceList(device_id=[device_id])
+    record = response[u"device_list"][u"devices"][0]
     return record
 
 
@@ -62,13 +52,11 @@ def EnsureTags(device_id, tags):
     if diff:
         LOG.info("Will attempt to add tags \"%s\" to device %d",
             ", ".join(sorted(diff)), device_id)
-        _ = server.updateDevice({
-              "UpdateDeviceRequest": {
-              "device_id": device_id,
-              "update_device_tags": True,
-              "device_tags": sorted(tags + existing_tags),
-            }
-          })
+        server.updateDevice(
+                device_id=device_id,
+                update_device_tags=True,
+                device_tags=sorted(tags + existing_tags),
+                )
         LOG.info("Tags set.")
     else:
         LOG.info("No additional tags need to be set")
@@ -88,7 +76,7 @@ def SetLogLevel():
 def main():
     LOG.debug("Creating RPC server proxy for %s", FLAGS.endpoint)
     global server
-    server = jsonrpclib.Server(FLAGS.endpoint)
+    server = jsonrpclib.Server(FLAGS.endpoint, verbose=(FLAGS.verbose >= 3))
     for mp in FLAGS.mountpoint:
         LOG.info("Trying mountpoint %s", mp)
         device_id = ReadDeviceId(mp)
