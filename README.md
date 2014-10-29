@@ -18,13 +18,13 @@ See the License for the specific language governing permissions and
 This module sets up Quobyte. It follows the profile/role pattern, i.e. it
 contains profile classes for services and other atomic pieces of configuration
 such as provisioning the quobyte repo. These profiles are aggregated into roles to be
-assigned to machines in an OpenStack cloud. At present the
+assigned to machines in an OpenStack cloud.
 
 
 ### Sample Usage with hiera
 
 ```
-quobyte::profile::server::api_service: 'http://node1.tld:50000/'
+quobyte::profile::server::api_service: 'http://user:pass@node1.tld:50000/'
 quobyte::profile::server::config::dir_service: 'node1.tld:50001,node2.tld:50001,node3.tld:50001'
 quobyte::profile::common::repo::repo_url: 'https://support.quobyte.com/repo/[...]/xUbuntu_14.04'
 quobyte::profile::common::repo::repo_key: '[...]'
