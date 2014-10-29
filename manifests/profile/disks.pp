@@ -1,11 +1,14 @@
 class quobyte::profile::disks (
-  $disks = undef,
+  $metadatadisks = undef,
+  $datadisks = undef,
 ) {
 
   require quobyte::profile::common::sysfsutils
   require quobyte::profile::common::tools
 
-  define quobyte_device () {
+  define quobyte_device (
+    $device_type = 'DATA',
+  ) {
 
     $base_device = "/dev/${name}"
     $part_device = "/dev/${name}1"
@@ -36,7 +39,9 @@ class quobyte::profile::disks (
       dump    => 0,
       pass    => 2,
     } ->
-    quobyte::profile::disks::qmkdev { $mountpoint: } ->
+    quobyte::profile::disks::qmkdev { $mountpoint:
+      device_type => $device_type,
+    } ->
     quobyte::profile::disks::qtags { $mountpoint:
       rotational => $rotational,
     }
@@ -54,8 +59,16 @@ class quobyte::profile::disks (
 
   }
 
-  if $disks {
-    quobyte_device { $disks: }
+  if $metadatadisks {
+    quobyte_device { $metadatadisks:
+      device_type => 'METADATA',
+    }
+  }
+
+  if $datadisks {
+    quobyte_device { $datadisks:
+      device_type => 'DATA',
+    }
   }
 
 }
