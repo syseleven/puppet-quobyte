@@ -1,8 +1,8 @@
-class quobyte::role::storage {
+class quobyte::role::directory {
 
   class { 'quobyte::profile::client': }
 
-  anchor { 'storage::start': }->
+  anchor { 'directory::start': }->
   class { 'quobyte::profile::server':
     notify => [
       Class['quobyte::profile::server::mrc'],
@@ -22,6 +22,6 @@ class quobyte::role::storage {
     run_service => false,
   }->
   class { 'quobyte::profile::disks': }->
-  anchor { 'storage::end': }
+  anchor { 'directory::end': }
 
 }
