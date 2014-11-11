@@ -14,4 +14,9 @@ class quobyte::profile::common::java8 {
     content => "# Managed by Puppet\noracle-java8-installer shared/accepted-oracle-license-v1-1 boolean true\n",
   }
 
+  file { '/etc/default/quobyte':
+    ensure => file,
+    source => "puppet:///modules/$module_name/default_quobyte"
+  }
+
 }
