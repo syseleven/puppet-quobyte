@@ -8,7 +8,7 @@ class quobyte::profile::disks (
   include quobyte::profile::common::sysfsutils
 
   define quobyte_device (
-    $device_type = 'DATA',
+    $device_types = ['DATA'],
   ) {
 
     $base_device = "/dev/${name}"
@@ -41,10 +41,15 @@ class quobyte::profile::disks (
       pass    => 2,
     } ->
     quobyte::profile::disks::qmkdev { $mountpoint:
-      device_type => $device_type,
-    } ->
+      device_type => $device_types[0],
+    }
+
     quobyte::profile::disks::qtags { $mountpoint:
       rotational => $rotational,
+    }
+
+    quobyte::profile::disks::qtypes { $mountpoint:
+      types => $device_types,
     }
 
     # If the device has a scheduler (not a virtual device),
@@ -62,19 +67,19 @@ class quobyte::profile::disks (
 
   if $registrydisks {
     quobyte_device { $registrydisks:
-      device_type => 'REGISTRY',
+      device_types => ['REGISTRY'],
     }
   }
 
   if $metadatadisks {
     quobyte_device { $metadatadisks:
-      device_type => 'METADATA',
+      device_types => ['METADATA'],
     }
   }
 
   if $datadisks {
     quobyte_device { $datadisks:
-      device_type => 'DATA',
+      device_types => ['DATA'],
     }
   }
 
