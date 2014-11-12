@@ -4,8 +4,8 @@ class quobyte::profile::disks (
   $datadisks = undef,
 ) {
 
-  include quobyte::profile::common::sysfsutils
   require quobyte::profile::common::tools
+  include quobyte::profile::common::sysfsutils
 
   define quobyte_device (
     $device_type = 'DATA',

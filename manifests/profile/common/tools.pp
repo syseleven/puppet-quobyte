@@ -1,6 +1,6 @@
 class quobyte::profile::common::tools () {
 
-  ensure_packages(['python-jsonrpclib'])
+  ensure_packages(['xfsprogs', 'sysfsutils', 'python-jsonrpclib'])
 
   file { '/usr/local/bin/quobyte_device_tags':
     mode   => '0555',
