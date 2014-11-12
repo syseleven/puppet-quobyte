@@ -6,8 +6,16 @@ class quobyte::profile::disks (
   include quobyte::profile::common::sysfsutils
 
   define quobyte_device (
-    $device_types = ['DATA'],
+    $diskroles = undef,
   ) {
+
+    if is_hash($diskroles) {
+      $device_types = $diskroles[$name]
+    }
+    else {
+      $device_types = ['DATA']
+    }
+
 
     $base_device = "/dev/${name}"
     $part_device = "/dev/${name}1"
@@ -66,7 +74,7 @@ class quobyte::profile::disks (
   $disks = keys($diskroles)
 
   quobyte_device { $disks:
-    device_types => $diskroles[$name],
+    diskroles => $diskroles,
   }
 
 }
