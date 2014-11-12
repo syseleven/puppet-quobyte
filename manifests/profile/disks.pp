@@ -1,7 +1,5 @@
 class quobyte::profile::disks (
-  $registrydisks = undef,
-  $metadatadisks = undef,
-  $datadisks = undef,
+  $diskroles = undef,
 ) {
 
   require quobyte::profile::common::tools
@@ -65,22 +63,8 @@ class quobyte::profile::disks (
 
   }
 
-  if $registrydisks {
-    quobyte_device { $registrydisks:
-      device_types => ['REGISTRY'],
-    }
-  }
-
-  if $metadatadisks {
-    quobyte_device { $metadatadisks:
-      device_types => ['METADATA'],
-    }
-  }
-
-  if $datadisks {
-    quobyte_device { $datadisks:
-      device_types => ['DATA'],
-    }
+  quobyte_device { keys($diskroles):
+    device_types => $diskroles[$name],
   }
 
 }
