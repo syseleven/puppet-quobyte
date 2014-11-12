@@ -63,7 +63,9 @@ class quobyte::profile::disks (
 
   }
 
-  quobyte_device { keys($diskroles):
+  $disks = keys($diskroles)
+
+  quobyte_device { $disks:
     device_types => $diskroles[$name],
   }
 
