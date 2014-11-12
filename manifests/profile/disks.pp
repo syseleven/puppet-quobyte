@@ -1,4 +1,5 @@
 class quobyte::profile::disks (
+  $registrydisks = undef,
   $metadatadisks = undef,
   $datadisks = undef,
 ) {
@@ -57,6 +58,12 @@ class quobyte::profile::disks (
       }
     }
 
+  }
+
+  if $registrydisks {
+    quobyte_device { $registrydisks:
+      device_type => 'REGISTRY',
+    }
   }
 
   if $metadatadisks {
