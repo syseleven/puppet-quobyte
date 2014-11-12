@@ -1,19 +1,9 @@
-# Default settings for starting Quobyte Services.
-# (e.g. when using /etc/init.d/quobyte or systemd)
+# Managed by Puppet
 
-# User under which the processes will be run (except for NFS).
 DAEMON_USER=quobyte
 
-# Default list of services (separated by spaces) which should be started
-# when "/etc/init.d/quobyte start" is executed.
-# When the list is empty, a service has to be specified explicitly e.g.
-#   /etc/init.d/quobyte start dir
-# OR
-#   /etc/init.d/quobyte-dir start
-#
-# Available services are for example:
-#   dir mrc osd api webconsole s3 nfs
-#DEFAULT_SERVICES=""
+# We use service-specific init scripts, so this is empty.
+DEFAULT_SERVICES=""
 
-# Path to Java 1.8 runtime environment (set when auto-detection fails).
+# JDK 8 autodetection doesn't always work with JDK 7 also installed.
 JAVA_HOME="/usr/lib/jvm/java-8-oracle/"
