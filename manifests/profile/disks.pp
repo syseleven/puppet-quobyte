@@ -50,10 +50,6 @@ class quobyte::profile::disks (
       device_type => $device_types[0],
     }
 
-    if $device_types[0] == "REGISTRY" {
-      Mount[$mountpoint] ~> Service['quobyte-dir']
-    }
-
     quobyte::profile::disks::qtags { $mountpoint:
       rotational => $rotational,
     }
