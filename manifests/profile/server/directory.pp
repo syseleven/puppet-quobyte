@@ -21,15 +21,14 @@ class quobyte::profile::server::directory (
     }
   }
 
-  # Sets the public_ip directive in /etc/quobyte/dir.cfg
-  # You may have to set this explicitely because autodetection sometimes picks
-  # the wrong interface's address.
+  # Sets the public_ip directive in service configuration file. You may have
+  # to set this explicitely because autodetection sometimes picks the wrong
+  # interface's address.
 
   if $public_ip {
-    file_line {'quobyte-dir-public_ip':
-      path   => '/etc/quobyte/dir.cfg',
-      line   => "public_ip = $public_ip",
-      notify => Service['quobyte-dir'],
+    quobyte::resources::public_ip{'/etc/quobyte/dir.cfg':
+      public_ip => $public_ip,
+      notify    => Service['quobyte-dir'],
     }
 
   }
