@@ -1,5 +1,5 @@
 class quobyte::profile::server::config (
-  $dir_service,
+  $registry,
 ) {
 
   file { '/etc/quobyte/host.cfg':
@@ -7,7 +7,7 @@ class quobyte::profile::server::config (
     owner   => 'root',
     group   => 'quobyte',
     mode    => '0440',
-    content => "# Managed by Puppet\ndir_service=${dir_service}\ndebug.level=6\n",
+    content => "# Managed by Puppet\nregistry=${registry}\ndebug.level=6\n",
   }
 
 }

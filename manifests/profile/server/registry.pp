@@ -1,23 +1,23 @@
-class quobyte::profile::server::directory (
+class quobyte::profile::server::registry (
   $run_service = true,
   $enabled_networks = undef,
   $public_ip = undef,
 ) {
 
-  service { 'quobyte-dir':
+  service { 'quobyte-registry':
     ensure => $run_service,
     enable => $run_service,
   }
 
-  # Sets the enabled_networks directive in /etc/quobyte/dir.cfg
+  # Sets the enabled_networks directive in /etc/quobyte/registry.cfg
   # You may have to set this explicitely because autodetection sometimes picks
   # the wrong network.
 
   if $enabled_networks {
-    file_line {'quobyte-dir-enabled_networks':
-      path   => '/etc/quobyte/dir.cfg',
+    file_line {'quobyte-registry-enabled_networks':
+      path   => '/etc/quobyte/registry.cfg',
       line   => "registry.enabled_networks = $enabled_networks",
-      notify => Service['quobyte-dir'],
+      notify => Service['quobyte-registry'],
     }
   }
 
@@ -26,9 +26,9 @@ class quobyte::profile::server::directory (
   # interface's address.
 
   if $public_ip {
-    quobyte::resources::public_ip{'/etc/quobyte/dir.cfg':
+    quobyte::resources::public_ip{'/etc/quobyte/registry.cfg':
       public_ip => $public_ip,
-      notify    => Service['quobyte-dir'],
+      notify    => Service['quobyte-registry'],
     }
 
   }

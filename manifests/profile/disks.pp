@@ -50,10 +50,6 @@ class quobyte::profile::disks (
       device_type => $device_types[0],
     }
 
-    quobyte::profile::disks::qtags { $mountpoint:
-      rotational => $rotational,
-    }
-
     quobyte::profile::disks::qtypes { $mountpoint:
       types => $device_types,
     }

@@ -1,9 +1,9 @@
-class quobyte::profile::server::osd (
+class quobyte::profile::server::metadata (
   $run_service = true,
   $public_ip = undef,
 ) {
 
-  service { 'quobyte-osd':
+  service { 'quobyte-metadata':
     ensure => $run_service,
     enable => $run_service,
   }
@@ -13,9 +13,9 @@ class quobyte::profile::server::osd (
   # interface's address.
 
   if $public_ip {
-    quobyte::resources::public_ip{'/etc/quobyte/osd.cfg':
+    quobyte::resources::public_ip{'/etc/quobyte/metadata.cfg':
       public_ip => $public_ip,
-      notify => Service['quobyte-osd'],
+      notify    => Service['quobyte-metadata'],
     }
   }
 
