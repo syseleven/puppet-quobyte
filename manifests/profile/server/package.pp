@@ -1,7 +1,9 @@
-class quobyte::profile::server::package {
+class quobyte::profile::server::package (
+  $ensure_version = '1.0.RC1.p15',
+) {
 
   package { 'quobyte-usp-server':
-    ensure => '1.0.RC1.p15',
+    ensure => $ensure_version,
   }
 
 }
