@@ -1,20 +1,20 @@
-class quobyte::role::directory {
+class quobyte::role::registry {
 
   class { 'quobyte::profile::client': }
 
-  anchor { 'directory::start': }->
+  anchor { 'registry::start': }->
   class { 'quobyte::profile::server':
     notify => [
-      Class['quobyte::profile::server::mrc'],
-      Class['quobyte::profile::server::osd'],
-      Class['quobyte::profile::server::directory'],
+      Class['quobyte::profile::server::registry'],
+      Class['quobyte::profile::server::metadata'],
+      Class['quobyte::profile::server::data'],
       Class['quobyte::profile::server::apiserver'],
       Class['quobyte::profile::server::webconsole'],
     ],
   }->
-  class { 'quobyte::profile::server::mrc': }->
-  class { 'quobyte::profile::server::osd': }->
-  class { 'quobyte::profile::server::directory': }->
+  class { 'quobyte::profile::server::registry': }->
+  class { 'quobyte::profile::server::metadata': }->
+  class { 'quobyte::profile::server::data': }->
   class { 'quobyte::profile::server::apiserver':
     run_service => false,
   }->
@@ -22,6 +22,6 @@ class quobyte::role::directory {
     run_service => false,
   }->
   class { 'quobyte::profile::disks': }->
-  anchor { 'directory::end': }
+  anchor { 'registry::end': }
 
 }

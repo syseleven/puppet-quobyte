@@ -1,9 +1,9 @@
-class quobyte::profile::server::mrc (
+class quobyte::profile::server::data (
   $run_service = true,
   $public_ip = undef,
 ) {
 
-  service { 'quobyte-mrc':
+  service { 'quobyte-data':
     ensure => $run_service,
     enable => $run_service,
   }
@@ -13,9 +13,9 @@ class quobyte::profile::server::mrc (
   # interface's address.
 
   if $public_ip {
-    quobyte::resources::public_ip{'/etc/quobyte/mrc.cfg':
+    quobyte::resources::public_ip{'/etc/quobyte/data.cfg':
       public_ip => $public_ip,
-      notify    => Service['quobyte-mrc'],
+      notify => Service['quobyte-data'],
     }
   }
 
