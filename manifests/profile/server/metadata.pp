@@ -1,6 +1,8 @@
 class quobyte::profile::server::metadata (
   $run_service = true,
   $public_ip = undef,
+  $rpc_port = false,
+  $http_port = false,
 ) {
 
   service { 'quobyte-metadata':
@@ -17,6 +19,18 @@ class quobyte::profile::server::metadata (
       public_ip => $public_ip,
       notify    => Service['quobyte-metadata'],
     }
+  }
+
+  quobyte::resources::service_port {'metadata_rpc_port':
+    service   => 'metadata',
+    port_type => 'rpc',
+    port_nr   => $rpc_port,
+  }
+
+  quobyte::resources::service_port {'metadata_http_port':
+    service   => 'metadata',
+    port_type => 'http',
+    port_nr   => $http_port,
   }
 
 }

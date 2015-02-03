@@ -2,6 +2,8 @@ class quobyte::profile::server::registry (
   $run_service = true,
   $enabled_networks = undef,
   $public_ip = undef,
+  $rpc_port = false,
+  $http_port = false,
 ) {
 
   service { 'quobyte-registry':
@@ -32,4 +34,17 @@ class quobyte::profile::server::registry (
     }
 
   }
+
+  quobyte::resources::service_port {'registry_rpc_port':
+    service   => 'registry',
+    port_type => 'rpc',
+    port_nr   => $rpc_port,
+  }
+
+  quobyte::resources::service_port {'registry_http_port':
+    service   => 'registry',
+    port_type => 'http',
+    port_nr   => $http_port,
+  }
+
 }

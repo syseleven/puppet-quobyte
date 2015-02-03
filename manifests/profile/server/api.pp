@@ -1,6 +1,9 @@
 class quobyte::profile::server::api (
   $run_service = true,
   $public_ip = undef,
+  $api_port = false,
+  $rpc_port = false,
+  $http_port = false,
 ) {
 
   service { 'quobyte-api':
@@ -17,6 +20,24 @@ class quobyte::profile::server::api (
       public_ip => $public_ip,
       notify    => Service['quobyte-api'],
     }
+  }
+
+  quobyte::resources::service_port {'api_api_port':
+    service   => 'api',
+    port_type => 'api',
+    port_nr   => $api_port,
+  }
+
+  quobyte::resources::service_port {'api_rpc_port':
+    service   => 'api',
+    port_type => 'rpc',
+    port_nr   => $rpc_port,
+  }
+
+  quobyte::resources::service_port {'api_http_port':
+    service   => 'api',
+    port_type => 'http',
+    port_nr   => $http_port,
   }
 
 }
