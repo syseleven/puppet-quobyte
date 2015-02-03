@@ -1,4 +1,4 @@
-class quobyte::profile::server::apiserver (
+class quobyte::profile::server::api (
   $run_service = true,
   $public_ip = undef,
 ) {
