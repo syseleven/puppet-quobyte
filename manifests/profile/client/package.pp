@@ -1,6 +1,6 @@
 class quobyte::profile::client::package {
 
-  package { 'quobyte-usp-client':
+  package { 'quobyte-client':
     ensure => latest,
   }
 
