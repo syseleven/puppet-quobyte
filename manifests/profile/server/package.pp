@@ -1,5 +1,5 @@
 class quobyte::profile::server::package (
-  $ensure_version = '1.0.RC1.p16.2',
+  $ensure_version = '1.0.RC1.p17',
 ) {
 
   package { 'quobyte-server':
