@@ -12,12 +12,12 @@ class quobyte::role::manager {
       Class['quobyte::profile::server::webconsole'],
     ],
   }->
+  class { 'quobyte::profile::disks': }->
   class { 'quobyte::profile::server::registry': }->
   class { 'quobyte::profile::server::metadata': }->
   class { 'quobyte::profile::server::data': }->
   class { 'quobyte::profile::server::api': }->
   class { 'quobyte::profile::server::webconsole': }->
-  class { 'quobyte::profile::disks': }->
   anchor { 'storage::end': }
 
 }

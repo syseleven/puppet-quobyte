@@ -12,6 +12,7 @@ class quobyte::role::registry {
       Class['quobyte::profile::server::webconsole'],
     ],
   }->
+  class { 'quobyte::profile::disks': }->
   class { 'quobyte::profile::server::registry': }->
   class { 'quobyte::profile::server::metadata': }->
   class { 'quobyte::profile::server::data': }->
@@ -21,7 +22,6 @@ class quobyte::role::registry {
   class { 'quobyte::profile::server::webconsole':
     run_service => false,
   }->
-  class { 'quobyte::profile::disks': }->
   anchor { 'registry::end': }
 
 }
