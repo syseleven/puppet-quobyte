@@ -4,6 +4,8 @@ class quobyte::profile::common::repo(
   $repo_key_source,
 ) {
 
+  include apt
+
   apt::key { 'quobyte.key':
     key        => $repo_key,
     key_source => $repo_key_source

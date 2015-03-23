@@ -1,5 +1,7 @@
 class quobyte::profile::common::java8 {
 
+  include apt
+
   apt::key { 'webupd8team':
     key => 'EEA14886',
   }->
