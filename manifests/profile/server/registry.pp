@@ -11,7 +11,7 @@ class quobyte::profile::server::registry (
   }
 
   # Sets the public_ip directive in service configuration file. You may have
-  # to set this explicitely because autodetection sometimes picks the wrong
+  # to set this explicitly because autodetection sometimes picks the wrong
   # interface's address.
 
   if $public_ip {
