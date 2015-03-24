@@ -1,6 +1,7 @@
 class quobyte::profile::server::s3 (
   $run_service = true,
   $public_ip = undef,
+  $s3_hostname = false,
   $s3_port = false,
   $rpc_port = false,
   $http_port = false,
@@ -19,6 +20,17 @@ class quobyte::profile::server::s3 (
     quobyte::resources::public_ip{'/etc/quobyte/s3.cfg':
       public_ip => $public_ip,
       notify    => Service['quobyte-s3'],
+    }
+  }
+
+  if $s3_hostname {
+    ini_setting {"quobyte_s3_s3_hostname":
+      path              => "/etc/quobyte/s3.cfg",
+      key_val_separator => '=',
+      section           => '',
+      setting           => "s3.hostname",
+      value             => $s3_hostname,
+      ensure            => present,
     }
   }
 
