@@ -23,14 +23,14 @@ class quobyte::profile::disks (
 
     # HACK: Implement variable indirection
     $rotational_fact = "::blockdevice_${name}_rotational"
-    $rotational = inline_template("<%= scope.lookupvar(rotational_fact) %>")
+    $rotational = inline_template("<%= scope.lookupvar(@rotational_fact) %>")
     if $rotational == '1' {
       $mountopts = 'noatime,nodiratime,largeio,swalloc,allocsize=131072k'
     } else {
       $mountopts = 'noatime,nodiratime,discard'
     }
     $scheduler_fact = "::blockdevice_${name}_scheduler"
-    $scheduler = inline_template("<%= scope.lookupvar(scheduler_fact) %>")
+    $scheduler = inline_template("<%= scope.lookupvar(@scheduler_fact) %>")
 
     quobyte::profile::disks::partition { $name: } ->
     quobyte::profile::disks::xfs { $part_device: } ->
