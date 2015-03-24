@@ -5,6 +5,7 @@ class quobyte::profile::server (
   $run_data = false,
   $run_api = false,
   $run_webconsole = false,
+  $run_s3 = false,
 ) {
 
   require quobyte::profile::common::repo
@@ -35,6 +36,11 @@ class quobyte::profile::server (
 
   class { 'quobyte::profile::server::webconsole':
     run_service => $run_webconsole,
+    require     => Class['quobyte::profile::server::package'],
+  }
+
+  class { 'quobyte::profile::server::s3':
+    run_service => $run_s3,
     require     => Class['quobyte::profile::server::package'],
   }
 
