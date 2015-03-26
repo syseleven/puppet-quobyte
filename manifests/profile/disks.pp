@@ -10,10 +10,10 @@ class quobyte::profile::disks (
   ) {
 
     if is_hash($diskroles) {
-      $device_types = $diskroles[$name]
+      $device_type = $diskroles[$name]
     }
     else {
-      $device_types = ['DATA']
+      $device_type = 'DATA'
     }
 
 
@@ -47,11 +47,7 @@ class quobyte::profile::disks (
       pass    => 2,
     } ->
     quobyte::profile::disks::qmkdev { $mountpoint:
-      device_type => $device_types[0],
-    }
-
-    quobyte::profile::disks::qtypes { $mountpoint:
-      types => $device_types,
+      device_type => $device_type,
     }
 
     # If the device has a scheduler (not a virtual device),
