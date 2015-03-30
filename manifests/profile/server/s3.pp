@@ -35,6 +35,7 @@ class quobyte::profile::server::s3 (
       setting           => "s3.hostname",
       value             => $s3_hostname,
       ensure            => present,
+      notify            => Service['quobyte-s3'],
     }
   }
 
@@ -46,6 +47,7 @@ class quobyte::profile::server::s3 (
       setting           => "s3.ks.host",
       value             => "${s3_keystone_host}:${s3_keystone_port}",
       ensure            => present,
+      notify            => Service['quobyte-s3'],
     } ->
     ini_setting {"quobyte_s3_s3_keystone_username":
       path              => "/etc/quobyte/s3.cfg",
@@ -54,6 +56,7 @@ class quobyte::profile::server::s3 (
       setting           => "s3.ks.user",
       value             => $s3_keystone_username,
       ensure            => present,
+      notify            => Service['quobyte-s3'],
     } ->
     ini_setting {"quobyte_s3_s3_keystone_password":
       path              => "/etc/quobyte/s3.cfg",
@@ -62,6 +65,7 @@ class quobyte::profile::server::s3 (
       setting           => "s3.ks.password",
       value             => $s3_keystone_password,
       ensure            => present,
+      notify            => Service['quobyte-s3'],
     }
   }
 
