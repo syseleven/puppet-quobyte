@@ -2,6 +2,10 @@ class quobyte::profile::server::s3 (
   $run_service = true,
   $public_ip = undef,
   $s3_hostname = false,
+  $s3_keystone_host = undef,
+  $s3_keystone_port = '35357',
+  $s3_keystone_username = undef,
+  $s3_keystone_password = undef,
   $s3_port = false,
   $rpc_port = false,
   $http_port = false,
@@ -30,6 +34,33 @@ class quobyte::profile::server::s3 (
       section           => '',
       setting           => "s3.hostname",
       value             => $s3_hostname,
+      ensure            => present,
+    }
+  }
+
+  if $s3_keystone_host {
+    ini_setting {"quobyte_s3_s3_keystone_hostport":
+      path              => "/etc/quobyte/s3.cfg",
+      key_val_separator => '=',
+      section           => '',
+      setting           => "s3.ks.host",
+      value             => "${s3_keystone_host}:${s3_keystone_port}",
+      ensure            => present,
+    } ->
+    ini_setting {"quobyte_s3_s3_keystone_username":
+      path              => "/etc/quobyte/s3.cfg",
+      key_val_separator => '=',
+      section           => '',
+      setting           => "s3.ks.user",
+      value             => $s3_keystone_username,
+      ensure            => present,
+    } ->
+    ini_setting {"quobyte_s3_s3_keystone_password":
+      path              => "/etc/quobyte/s3.cfg",
+      key_val_separator => '=',
+      section           => '',
+      setting           => "s3.ks.password",
+      value             => $s3_keystone_password,
       ensure            => present,
     }
   }
