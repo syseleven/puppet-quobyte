@@ -28,6 +28,20 @@ class quobyte::profile::server::s3 (
     managehome => true,
   }
 
+  $s3_config_files = [
+    '/etc/quobyte/s3.cfg',
+    '/etc/quobyte/s3.passwd',
+  ]
+
+  file { $s3_config_files:
+    ensure  => present,
+    owner   => 'root',
+    group   => 'quobyte-s3',
+    mode    => '0640',
+    require => Package['quobyte-server'],
+    notify  => Service['quobyte-s3'],
+  }
+
   # Sets the public_ip directive in service configuration file. You may have
   # to set this explicitly because autodetection sometimes picks the wrong
   # interface's address.
