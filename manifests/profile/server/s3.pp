@@ -6,14 +6,26 @@ class quobyte::profile::server::s3 (
   $s3_keystone_port = '35357',
   $s3_keystone_username = undef,
   $s3_keystone_password = undef,
-  $s3_port = false,
+  $s3_port = '8280',
   $rpc_port = false,
   $http_port = false,
 ) {
 
   service { 'quobyte-s3':
-    ensure => $run_service,
-    enable => $run_service,
+    ensure  => $run_service,
+    enable  => $run_service,
+    require => User['quobyte-s3']
+  }
+
+  group { 'quobyte-s3':
+    ensure => present,
+  }
+
+  user { 'quobyte-s3':
+    ensure     => present,
+    gid        => 'quobyte-s3',
+    home       => '/var/lib/quobyte-s3',
+    managehome => true,
   }
 
   # Sets the public_ip directive in service configuration file. You may have
