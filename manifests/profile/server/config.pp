@@ -6,7 +6,7 @@ class quobyte::profile::server::config (
     ensure  => file,
     owner   => 'root',
     group   => 'quobyte',
-    mode    => '0440',
+    mode    => '0444',
     content => "# Managed by Puppet\nregistry=${registry}\ndebug.level=6\n",
   }
 
