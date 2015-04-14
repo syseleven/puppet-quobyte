@@ -1,6 +1,7 @@
 # Managed by Puppet
 
 DAEMON_USER=quobyte
+S3_DAEMON_USER=quobyte-s3
 
 # We use service-specific init scripts, so this is empty.
 DEFAULT_SERVICES=""

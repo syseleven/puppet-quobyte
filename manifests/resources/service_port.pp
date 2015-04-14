@@ -10,6 +10,7 @@ define quobyte::resources::service_port (
       setting           => "${port_type}.port",
       value             => $port_nr,
       ensure            => present,
+      notify            => Service["quobyte-${service}"]
     }
   } else {
     ini_setting {"quobyte_${service}_${port_type}_port":
@@ -18,6 +19,7 @@ define quobyte::resources::service_port (
       section           => '',
       setting           => "${port_type}.port",
       ensure            => absent,
+      notify            => Service["quobyte-${service}"]
     }
   }
 }

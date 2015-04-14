@@ -10,10 +10,10 @@ class quobyte::profile::disks (
   ) {
 
     if is_hash($diskroles) {
-      $device_types = $diskroles[$name]
+      $device_type = $diskroles[$name]
     }
     else {
-      $device_types = ['DATA']
+      $device_type = 'DATA'
     }
 
 
@@ -23,14 +23,14 @@ class quobyte::profile::disks (
 
     # HACK: Implement variable indirection
     $rotational_fact = "::blockdevice_${name}_rotational"
-    $rotational = inline_template("<%= scope.lookupvar(rotational_fact) %>")
+    $rotational = inline_template("<%= scope.lookupvar(@rotational_fact) %>")
     if $rotational == '1' {
       $mountopts = 'noatime,nodiratime,largeio,swalloc,allocsize=131072k'
     } else {
       $mountopts = 'noatime,nodiratime,discard'
     }
     $scheduler_fact = "::blockdevice_${name}_scheduler"
-    $scheduler = inline_template("<%= scope.lookupvar(scheduler_fact) %>")
+    $scheduler = inline_template("<%= scope.lookupvar(@scheduler_fact) %>")
 
     quobyte::profile::disks::partition { $name: } ->
     quobyte::profile::disks::xfs { $part_device: } ->
@@ -47,11 +47,7 @@ class quobyte::profile::disks (
       pass    => 2,
     } ->
     quobyte::profile::disks::qmkdev { $mountpoint:
-      device_type => $device_types[0],
-    }
-
-    quobyte::profile::disks::qtypes { $mountpoint:
-      types => $device_types,
+      device_type => $device_type,
     }
 
     # If the device has a scheduler (not a virtual device),
