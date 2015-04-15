@@ -1,9 +1,11 @@
-class quobyte::profile::client::package {
+class quobyte::profile::client::package (
+  $ensure_version = 'installed',
+) {
 
   require quobyte::profile::common::repo
 
   package { 'quobyte-client':
-    ensure => latest,
+    ensure => $ensure_version,
   }
 
 }
