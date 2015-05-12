@@ -6,6 +6,7 @@ class quobyte::profile::server::s3 (
   $s3_keystone_port = '35357',
   $s3_keystone_userid = undef,
   $s3_keystone_password = undef,
+  $s3_keystone_alternative_mapping = true,
   $s3_port = '8280',
   $rpc_port = false,
   $http_port = false,
@@ -90,6 +91,18 @@ class quobyte::profile::server::s3 (
       section           => '',
       setting           => "s3.ks.password",
       value             => $s3_keystone_password,
+      ensure            => present,
+      notify            => Service['quobyte-s3'],
+    } ->
+    ini_setting {"quobyte_s3_s3_alternative_mapping":
+      path              => "/etc/quobyte/s3.cfg",
+      key_val_separator => '=',
+      section           => '',
+      setting           => "s3.ks.alternative_mapping",
+      value             => $s3_keystone_alternative_mapping ? {
+                             true    => 'true',
+                             default => 'false',
+                           },
       ensure            => present,
       notify            => Service['quobyte-s3'],
     }
