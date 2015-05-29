@@ -1,0 +1,23 @@
+configuration_name: "Nova"
+base_configuration: "BASE"
+volume_metadata_configuration {
+  replication_factor: 3
+}
+default_config {
+  file_layout {
+    stripe_width: 5
+    replication_factor: 3
+    block_size_bytes: 4096
+    object_size_bytes: 8388608
+    striping_method: OBJECT_LEVEL
+    segment_size_bytes: 10737418240
+  }
+  io_policy {
+    cache_size_in_objects: 50
+    enable_async_writebacks: true
+    enable_client_checksum_verification: true
+    enable_client_checksum_computation: true
+    sync_writes: AS_REQUESTED
+    direct_io: DISABLE_ALWAYS
+  }
+}

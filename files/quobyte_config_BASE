@@ -1,0 +1,33 @@
+configuration_name: "BASE"
+volume_metadata_configuration {
+  placement_settings {
+    prefer_client_local_device: false
+  }
+  replication_factor: 3
+}
+default_config {
+  file_layout {
+    stripe_width: 1
+    replication_factor: 3
+    block_size_bytes: 4096
+    object_size_bytes: 8388608
+    striping_method: OBJECT_LEVEL
+    segment_size_bytes: 10737418240
+    crc_method: CRC32C
+  }
+  placement {
+    forbidden_device_tags {
+      tags: "ssd"
+    }
+    prefer_client_local_device: false
+  }
+  io_policy {
+    cache_size_in_objects: 10
+    enable_async_writebacks: true
+    async_writebacks_are_sync: true
+    enable_client_checksum_verification: true
+    enable_client_checksum_computation: true
+    sync_writes: AS_REQUESTED
+    direct_io: AS_REQUESTED
+  }
+}
