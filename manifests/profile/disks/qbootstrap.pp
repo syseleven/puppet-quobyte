@@ -11,6 +11,7 @@ class quobyte::profile::disks::qbootstrap (
       path     => ['/sbin/', '/usr/sbin/', '/bin', '/usr/bin'],
       unless   => "test -e ${mountpoint}/QUOBYTE_DEV_SETUP",
       before   => [Exec["qmkdev-$mountpoint"], Service['quobyte-api']],
+      require  => Class['quobyte::profile::server::package'],
     }
   }
 
