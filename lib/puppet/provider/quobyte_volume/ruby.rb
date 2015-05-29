@@ -1,6 +1,6 @@
 Puppet::Type.type(:heat_resources).provide(:quobyte_volume) do
   
- desc "Creates resource registry environments for custom Heat resources in Heat's environment directory."
+ desc 'Manages Quobyte volumes.'
 
   # Checks whether the declared resource exists already.
   
@@ -34,7 +34,7 @@ Puppet::Type.type(:heat_resources).provide(:quobyte_volume) do
     return ret
   end
 
-  # Creates a new environment.d entry from resource.
+  # Creates a new volume.
   
   def create
     properties = [ resource[:name],
