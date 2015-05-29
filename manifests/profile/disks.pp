@@ -5,6 +5,9 @@ class quobyte::profile::disks (
   require quobyte::profile::common::tools
   include quobyte::profile::common::sysfsutils
 
+  class { 'quobyte::profile::disks::qbootstrap': }
+
+
   define quobyte_device (
     $diskroles = undef,
   ) {
