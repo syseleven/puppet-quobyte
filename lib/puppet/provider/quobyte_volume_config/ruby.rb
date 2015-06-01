@@ -6,7 +6,7 @@ Puppet::Type.type(:quobyte_volume_config).provide(:quobyte_volume_config) do
   
   def exists?
     configs = Hash.new
-    qmgmt(['volume', 'config' 'list']).each_line { |l|
+    qmgmt(['volume', 'config', 'list']).each_line { |l|
       configs[l.chomp()] = true
     }
 
@@ -24,9 +24,9 @@ Puppet::Type.type(:quobyte_volume_config).provide(:quobyte_volume_config) do
     if ( resource[:api_url] )
       args.unshift('-u', resource[:api_url])
     end
-
+    
     while ( ret.exitstatus == 248 ) # Cluster not ready
-      ret = run.execute(['/usr/bin/qmgmt'] +  args)
+      ret = Puppet::Util::Execution.execute(['/usr/bin/qmgmt'] +  args)
     end
 
 

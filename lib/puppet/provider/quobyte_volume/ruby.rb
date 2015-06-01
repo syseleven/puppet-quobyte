@@ -32,7 +32,7 @@ Puppet::Type.type(:quobyte_volume).provide(:quobyte_volume) do
     ret = run.execute(['/usr/bin/qmgmt'] +  args)
 
     while ( ret.exitstatus == 248 ) # Cluster not ready
-      ret = run.execute(['/usr/bin/qmgmt'] +  args)
+      ret = Puppet::Util::Execution.execute(['/usr/bin/qmgmt'] +  args)
     end
 
 
