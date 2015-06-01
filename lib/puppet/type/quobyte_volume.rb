@@ -15,7 +15,7 @@ Puppet::Type.newtype(:quobyte_volume) do
   end
 
   newparam(:name, :namevar => true) do
-    desc "The configuration to use, e.g. BASE"
+    desc "The volumes's name."
     newvalues(/\S+/)
   end
 
@@ -39,5 +39,11 @@ Puppet::Type.newtype(:quobyte_volume) do
     defaultto 'BASE'
     desc "The configuration to use, e.g. BASE"
     newvalues(/\S+/)
+  end
+
+  newparam(:api_url) do
+    desc "The Quobyte API URL to use."
+    newvalues(/\S+/)
+    defaultto nil
   end
 end

@@ -23,4 +23,10 @@ Puppet::Type.newtype(:quobyte_volume_config) do
     desc "The configuration's contents."
     newvalues(/\S+/)
   end
+
+  newparam(:api_url) do
+    desc "The Quobyte API URL to use."
+    newvalues(/\S+/)
+    defaultto nil
+  end
 end
