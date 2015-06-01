@@ -6,7 +6,7 @@ class quobyte::profile::disks::qbootstrap (
 
   if $device {
     exec { "qbootstrap-${mountpoint}":
-      command  => "qbootstrap -s \$(uuidgen) ${mointpoint}",
+      command  => "qbootstrap -s \$(uuidgen) ${mountpoint}",
       provider => shell,
       path     => ['/sbin/', '/usr/sbin/', '/bin', '/usr/bin'],
       unless   => "test -e ${mountpoint}/QUOBYTE_DEV_SETUP",
