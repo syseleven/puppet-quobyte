@@ -1,4 +1,4 @@
-Puppet::Type.type(:heat_resources).provide(:quobyte_volume_config) do
+Puppet::Type.type(:quobyte_volume_config).provide(:quobyte_volume_config) do
   
  desc 'Manages Quobyte volume configurations.'
 

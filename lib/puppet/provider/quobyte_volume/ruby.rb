@@ -1,4 +1,4 @@
-Puppet::Type.type(:heat_resources).provide(:quobyte_volume) do
+Puppet::Type.type(:quobyte_volume).provide(:quobyte_volume) do
   
  desc 'Manages Quobyte volumes.'
 
