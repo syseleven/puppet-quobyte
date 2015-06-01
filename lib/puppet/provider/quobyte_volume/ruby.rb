@@ -7,7 +7,7 @@ Puppet::Type.type(:quobyte_volume).provide(:quobyte_volume) do
   def exists?
     volumes = Hash.new
     qmgmt(['volume', 'list']).each_line { |l|
-      if ( line.match(/^Name/) )
+      if ( l.match(/^Name/) )
           next
       end
       line = l.split(/\s{2,}/)
@@ -23,13 +23,11 @@ Puppet::Type.type(:quobyte_volume).provide(:quobyte_volume) do
 
 
   def qmgmt(args)
-    run = Puppet::Util::Execution.new
-
     if ( resource[:api_url] )
       args.unshift('-u', resource[:api_url])
     end
 
-    ret = run.execute(['/usr/bin/qmgmt'] +  args)
+    ret = Puppet::Util::Execution.execute(['/usr/bin/qmgmt'] +  args)
 
     while ( ret.exitstatus == 248 ) # Cluster not ready
       ret = Puppet::Util::Execution.execute(['/usr/bin/qmgmt'] +  args)
