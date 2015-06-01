@@ -45,7 +45,7 @@ Puppet::Type.type(:heat_resources).provide(:quobyte_volume) do
   # Removes an existing volume configuration.
 
   def destroy
-    ret = qmgmt(['volume', 'config', delete, resource[:name]])
+    ret = qmgmt(['volume', 'config', 'delete', resource[:name]])
     if ( ret.exitstatus != 0 )
       fail("quobyte volume config delete #{resource[:name]} failed with status #{ret.exitstatus.to_s}. Output follows." + out.join("\n"))
     end
