@@ -29,7 +29,6 @@ Puppet::Type.type(:quobyte_volume_config).provide(:quobyte_volume_config) do
       ret = Puppet::Util::Execution.execute(['/usr/bin/qmgmt'] +  args)
     end
 
-
     return ret
   end
 
@@ -39,7 +38,7 @@ Puppet::Type.type(:quobyte_volume_config).provide(:quobyte_volume_config) do
     tmp = Puppet::FileSystem::Uniquefile.new('quobyte_volume_config')
     tmp.write(resource[:content])
 
-    qmgmt(['volume', 'config', 'import'], tmp.open())
+    qmgmt(['volume', 'config', 'import', resource[:name]], tmp.open())
   end
 
   # Removes an existing volume configuration.
