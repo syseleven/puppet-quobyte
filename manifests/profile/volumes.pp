@@ -37,20 +37,20 @@ class quobyte::profile::volumes (
       $api_url,
     ) {
       if $volumes['mode'] {
-        $mode = $volumes['mode']
+        $mode = $volumes[$name]['mode']
       } else {
         $mode = undef
       }
 
       if $volumes['config'] {
-        $config = $volumes['config']
+        $config = $volumes[$name]['config']
       } else {
         $config = undef
       }
 
       quobyte_volume{$name:
-        user    => $volumes['user'],
-        group   => $volumes['group'],
+        user    => $volumes[$name]['user'],
+        group   => $volumes[$name]['group'],
         mode    => $mode,
         config  => $config,
         api_url => $api_url,
