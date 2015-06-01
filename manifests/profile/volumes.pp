@@ -25,7 +25,7 @@ class quobyte::profile::volumes (
     define quobyte_volume_configs(
       ) {
         quobyte_volume_config { $name:
-          content => file("puppet:///modules/$module_name/quobyte_volume_config_$name"),
+          content => file("$module_name/quobyte_volume_config_$name"),
         }
       }
 
