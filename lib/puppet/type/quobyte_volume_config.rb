@@ -27,6 +27,6 @@ Puppet::Type.newtype(:quobyte_volume_config) do
   newparam(:api_url) do
     desc "The Quobyte API URL to use."
     newvalues(/\S+/)
-    defaultto nil
+    defaultto 'http://127.0.0.1:17860'
   end
 end
