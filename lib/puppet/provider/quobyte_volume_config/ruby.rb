@@ -6,7 +6,7 @@ Puppet::Type.type(:quobyte_volume_config).provide(:quobyte_volume_config) do
   
   def exists?
     configs = Hash.new
-    qmgmt('volume', 'config' 'list').each_line { |l|
+    qmgmt(['volume', 'config' 'list']).each_line { |l|
       config[l.chomp()] = true
     }
 

@@ -6,7 +6,7 @@ Puppet::Type.type(:quobyte_volume).provide(:quobyte_volume) do
   
   def exists?
     volumes = Hash.new
-    qmgmt('volume', 'list').each_line { |l|
+    qmgmt(['volume', 'list']).each_line { |l|
       if ( line.match(/^Name/) )
           next
       end
