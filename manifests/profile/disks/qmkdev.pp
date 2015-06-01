@@ -7,6 +7,7 @@ define quobyte::profile::disks::qmkdev (
     provider => shell,
     path     => ['/sbin/', '/usr/sbin/', '/bin', '/usr/bin'],
     unless   => "test -e ${name}/QUOBYTE_DEV_SETUP",
+    require  => Class['quobyte::profile::server::package'],
   }
 
 }
