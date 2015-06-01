@@ -24,9 +24,14 @@ Puppet::Type.type(:heat_resources).provide(:quobyte_volume) do
 
   def qmgmt(args)
     run = Puppet::Util::Execution.new
+
+    if ( resource[:api_url] )
+      args.unshift('-u', resource[:api_url])
+    end
+
     ret = run.execute(['/usr/bin/qmgmt'] +  args)
 
-    while ( ret.exitstatus == 111 ) # Cluster not ready FIXME: Figure out appropriate exit status
+    while ( ret.exitstatus == 248 ) # Cluster not ready
       ret = run.execute(['/usr/bin/qmgmt'] +  args)
     end
 
