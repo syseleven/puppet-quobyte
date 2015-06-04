@@ -7,8 +7,8 @@ class quobyte::profile::common::repo(
   include apt
 
   apt::key { 'quobyte.key':
-    key        => $repo_key,
-    key_source => $repo_key_source
+    id        => $repo_key,
+    source => $repo_key_source
   }
 
   apt::source { 'quobyte':
@@ -16,7 +16,6 @@ class quobyte::profile::common::repo(
     release     => '',
     repos       => './',
     key         => $repo_key,
-    include_src => false,
   }
 
 }
