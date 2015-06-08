@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# 2015, s.andres@syseleven.de
+#
+
+if ((!$#)); then
+  echo "$0 quorum"
+  exit 1
+fi
+
+quorum=$1
+count=$(qmgmt -u <%= @quobyte_api_simple -%> registry list)
+
+if ! [[ $count =~ ^-?[0-9]+$ ]]; then
+  echo "UNKOWN - could not get quobyte data"
+  exit 3
+fi
+
+if ((count < quorum)); then
+  echo "WARNING - quobyte registry quorum is $count/$quorum"
+  exit 1
+else
+  echo "OK - quobyte registry quorum is $count/$quorum"
+fi

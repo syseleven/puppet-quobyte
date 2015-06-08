@@ -1,4 +1,4 @@
-class quobyte::role::server (
+class quobyte::role::server_bootstrap (
   $bootstrap_device = hiera('quobyte::profile::disks::qbootstrap::device', undef)
 )
 {
@@ -6,7 +6,7 @@ class quobyte::role::server (
 include quobyte::profile::client
 include quobyte::profile::disks
 class { 'quobyte::profile::server':
-  monitoring => true,
+  monitoring => false,
 }
 
 # Only create volumes on the node bootstrapping the cluster in order to avoid

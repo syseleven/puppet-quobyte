@@ -3,7 +3,12 @@ class quobyte::profile::server::registry (
   $public_ip = undef,
   $rpc_port = false,
   $http_port = false,
+  $monitoring = false,
 ) {
+
+  if $monitoring {
+    include quobyte::profile::server::registry::monitoring
+  }
 
   service { 'quobyte-registry':
     ensure => $run_service,

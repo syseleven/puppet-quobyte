@@ -1,0 +1,24 @@
+class quobyte::profile::server::registry::monitoring(
+  $monitoring = hiera('sys11stack::monitoring', false),
+  $quobyte_api_service = hiera('quobyte::profile::server::api_service'),
+  $quorum = hiera('quobyte::profile::server::registry::quorum', 3),
+) {
+
+  $quobyte_api_simple = regsubst($quobyte_api_service, 'admin:quobyte@', '')
+
+  case $monitoring {
+    'sensu': {
+      file {'/usr/lib/nagios/plugins/check_quobyte_registry_device_count':
+        ensure  => file,
+        mode    => '0555',
+        content => template("$module_name/monitoring/check_quobyte_registry_device_count.erb"),
+      }
+      sensu::check{'quobyte_registry_device_count':
+        command => '/usr/lib/nagios/plugins/check_quobyte_registry_device_count',
+        require => File['/usr/lib/nagios/plugins/check_quobyte_registry_device_count'],
+      }
+    }
+    false:  { }
+    default: { fail("Only sensu monitoring supported ('$monitoring' given)") }
+  }
+}

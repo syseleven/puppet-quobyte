@@ -6,6 +6,7 @@ class quobyte::profile::server (
   $run_api = false,
   $run_webconsole = false,
   $run_s3 = false,
+  $monitoring = false
 ) {
 
   require quobyte::profile::common::repo
@@ -16,6 +17,7 @@ class quobyte::profile::server (
 
   class { 'quobyte::profile::server::registry':
     run_service => $run_registry,
+    monitoring  => $monitoring,
     require     => Class['quobyte::profile::server::package'],
   }
 
