@@ -6,8 +6,10 @@ class quobyte::profile::server::registry (
   $monitoring = false,
 ) {
 
-  if $monitoring {
-    include quobyte::profile::server::registry::monitoring
+  if $run_service {
+    if $monitoring {
+      include quobyte::profile::server::registry::monitoring
+    }
   }
 
   service { 'quobyte-registry':
