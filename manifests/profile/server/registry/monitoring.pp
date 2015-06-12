@@ -8,13 +8,18 @@ class quobyte::profile::server::registry::monitoring(
 
   case $monitoring {
     'sensu': {
+      file_line { 'sudo_check_quobyte_registry_device_count':
+        path    => '/etc/sudoers',
+        line    => 'sensu ALL=(ALL) NOPASSWD: /usr/lib/nagios/plugins/check_quobyte_registry_device_count',
+      }
+
       file {'/usr/lib/nagios/plugins/check_quobyte_registry_device_count':
         ensure  => file,
         mode    => '0555',
         content => template("$module_name/monitoring/check_quobyte_registry_device_count.erb"),
       }
       sensu::check{'quobyte_registry_device_count':
-        command => "/usr/lib/nagios/plugins/check_quobyte_registry_device_count $quorum",
+        command => "sudo /usr/lib/nagios/plugins/check_quobyte_registry_device_count $quorum",
         require => File['/usr/lib/nagios/plugins/check_quobyte_registry_device_count'],
       }
     }
