@@ -43,7 +43,9 @@ Puppet::Type.type(:quobyte_volume).provide(:quobyte_volume) do
     properties = [ resource[:name],
                    resource[:user],
                    resource[:group],
-                   resource[:group] ]
+                   resource[:group],
+                   resource[:mode],
+                  ]
 
     qmgmt(['volume', 'create'] + properties)
   end

@@ -30,7 +30,7 @@ Puppet::Type.newtype(:quobyte_volume) do
   end
 
   newparam(:mode) do
-    defaultto '0755'
+    defaultto '0770'
     desc 'The permission mode on this volume.'
     newvalues(/\S+/)
   end
