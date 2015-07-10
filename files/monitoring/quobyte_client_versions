@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+
+import apt
+import apt_pkg
+import html5lib
+import json
+import requests
+import sys
+
+NS = {"html": "http://www.w3.org/1999/xhtml"}
+
+def main():
+    apt_cache = apt.cache.Cache()
+    installed_version = apt_cache["quobyte-client"].installed.version
+    print("OK - Quobyte Client %s is installed" % (installed_version,))
+
+    warnings = 0
+
+    for port in range(55000, 55020):
+        try:
+            statuspage = requests.get("http://127.0.0.1:%d/" % (port,))
+            tree = html5lib.parse(statuspage.content)
+            rows = tree.iterfind(".//html:table[@class='mainTable']/html:tbody/html:tr", NS)
+            clientdata = {}
+            for tr in rows:
+                key = (tr[0].text or "").strip()
+                val = (tr[1].text or "").strip()
+                clientdata[key] = val
+            running_version = "1:" + clientdata["Quobyte: Release"].split()[0]
+            if apt_pkg.version_compare(running_version, installed_version) < 0:
+                print("WARNING - Client on port %d is running outdated release %s" % (port, clientdata["Quobyte: Release"]))
+                warnings += 1
+            else:
+                print("OK - Client on port %d is running release %s" % (port, clientdata["Quobyte: Release"]))
+        except requests.exceptions.ConnectionError:
+            # We don't care, we only want to check the client version
+            # if there is a client there.
+            pass
+
+    if warnings:
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
