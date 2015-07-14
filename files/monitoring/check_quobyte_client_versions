@@ -4,7 +4,6 @@
 import apt
 import apt_pkg
 import html5lib
-import json
 import requests
 import sys
 
