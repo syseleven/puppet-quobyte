@@ -43,7 +43,7 @@ Puppet::Type.type(:quobyte_volume).provide(:quobyte_volume) do
     properties = [ resource[:name],
                    resource[:user],
                    resource[:group],
-                   resource[:group],
+                   resource[:config],
                    resource[:mode],
                   ]
 
