@@ -1,4 +1,4 @@
-configuration_name: "Cinder"
+configuration_name: "cinder"
 base_configuration: "BASE"
 volume_metadata_configuration {
   replication_factor: 3

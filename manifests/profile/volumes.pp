@@ -7,7 +7,7 @@ class quobyte::profile::volumes (
     $api_url = "http://${public_ip}:${api_port}"
 
     # Add an appropriately named file (see below) and an entry to this list for new volume configs.
-    $volume_configs = ['BASE', 'Cinder', 'Nova']
+    $volume_configs = ['BASE', 'cinder', 'nova', 'glance']
 
     $volumes_keys = keys($volumes)
 

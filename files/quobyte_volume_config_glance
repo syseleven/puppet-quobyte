@@ -1,4 +1,4 @@
-configuration_name: "Glance"
+configuration_name: "glance"
 base_configuration: "BASE"
 volume_metadata_configuration {
   replication_factor: 3
