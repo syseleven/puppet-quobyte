@@ -3,8 +3,12 @@ class quobyte::role::server (
 )
 {
 
-include quobyte::profile::client
+class { 'quobyte::profile::client':
+  monitoring => true,
+}
+
 include quobyte::profile::disks
+
 class { 'quobyte::profile::server':
   monitoring => true,
 }
