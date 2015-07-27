@@ -5,7 +5,7 @@ class quobyte::profile::server::config (
   $smtp_sender = 'quobyte@localhost',
   $keystone_hostname = '',
   $keystone_port = 35357,
-  $keystone_user_id = '',
+  $keystone_userid = '',
   $keystone_password = '',
 ) {
 

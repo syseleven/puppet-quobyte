@@ -1,0 +1,23 @@
+# Puppet system config template
+#
+# NOTE
+# This is not regularly loaded by Quobyte, it needs to be explicitly imported.
+# If you want to know the current system config, use qmgmt systemconfig export
+# or the web console.
+
+smtp {
+  host: "<%= @smtp_host %>"
+  port: <%= @smtp_port %>
+  default_sender: "<%= @smtp_sender %>"
+}
+
+security {
+  user_database: "KEYSTONE"
+}
+
+keystone {
+  hostname: "<%= @keystone_hostname %>"
+  port: <%= @keystone_port %>
+  admin_user_id: "<%= @keystone_userid %>"
+  admin_password: "<%= @keystone_password %>"
+}
