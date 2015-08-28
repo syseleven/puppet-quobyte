@@ -10,4 +10,12 @@ class quobyte::profile::common::tools () {
     mode   => '0755',
   }
 
+  file { '/usr/local/bin/increase-storage-queuedepth':
+    ensure => file,
+    source => "puppet:///modules/$module_name/increase-storage-queuedepth",
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+
 }

@@ -4,6 +4,10 @@ class quobyte::profile::disks (
 
   require quobyte::profile::common::tools
 
+  exec { "increase-storage-queuedepth":
+    command => "/usr/local/bin/increase-storage-queuedepth",
+  }
+
   define quobyte_device (
     $diskroles = undef,
   ) {
