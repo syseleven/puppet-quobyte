@@ -33,16 +33,10 @@ quobyte::profile::common::repo::repo_key: '[...]'
 quobyte::profile::common::repo::repo_key_source: 'https://support.quobyte.com/repo/[...]/xUbuntu_14.04/Release.key'
 
 # Which block devices to turn into Quobyte Data Devices.
-# If the REGISTRY type is included, it has to be first (initial type).
 # This will partition and format the device, potentially destroying existing data!
 quobyte::profile::disks::diskroles:
-  sdb:
-    - REGISTRY
-    - METADATA
-  sdc:
-    - DATA
-  sdd:
-    - DATA
-  sde:
-    - DATA
+  /dev/sdb: REGISTRY
+  /dev/sdc: METADATA
+  /dev/sdd: DATA
+  /dev/sde: DATA
 ```
