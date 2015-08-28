@@ -1,5 +1,5 @@
 class quobyte::role::server_bootstrap (
-  $bootstrap_device = hiera('quobyte::profile::disks::qbootstrap::device', undef)
+  $bootstrap_device = hiera('quobyte::profile::disks::bootstrap_device', undef)
 )
 {
 

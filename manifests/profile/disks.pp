@@ -1,5 +1,6 @@
 class quobyte::profile::disks (
   $diskroles = undef,
+  $bootstrap_device = undef,
 ) {
 
   require quobyte::profile::common::tools
@@ -30,6 +31,12 @@ class quobyte::profile::disks (
 
     quobyte_device { $disks:
       diskroles => $diskroles,
+    }
+  }
+
+  if $bootstrap_device {
+    exec {"prepare-quobyte-bootstrap-device":
+      command => "/usr/local/bin/prepare-quobyte-device -t REGISTRY -b ${bootstrap_device}",
     }
   }
 
