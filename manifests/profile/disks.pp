@@ -25,10 +25,12 @@ class quobyte::profile::disks (
 
   }
 
-  $disks = keys($diskroles)
+  if $diskroles {
+    $disks = keys($diskroles)
 
-  quobyte_device { $disks:
-    diskroles => $diskroles,
+    quobyte_device { $disks:
+      diskroles => $diskroles,
+    }
   }
 
 }
