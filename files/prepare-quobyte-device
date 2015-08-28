@@ -57,6 +57,7 @@ class FSTab(object):
                 self.entries.append(None)
 
     def add_entry(self, entry):
+        # Look for existing entry for this fs_spec
         for i, e in enumerate(self.entries):
             if e and e.fs_spec == entry.fs_spec:
                 if e != entry:
@@ -64,6 +65,7 @@ class FSTab(object):
                     return True
                 else:
                     return False
+        # Nothing found, append a new entry
         self.lines.append("# Next line injected by prepare-quobyte-device")
         self.entries.append(None)
         self.lines.append("")
@@ -81,6 +83,7 @@ class FSTab(object):
             f.write("\n")
         f.flush()
         os.rename(f.name, "/etc/fstab")
+        f.close()
 
 
 class QuobyteDevicePrepper(object):
