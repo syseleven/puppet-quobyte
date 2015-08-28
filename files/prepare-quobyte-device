@@ -36,6 +36,11 @@ def is_mountpoint(path):
     return rc == 0
 
 
+def probe_device(path):
+    rc = subprocess.call(["/sbin/blkid", "-p", path])
+    return rc == 0
+
+
 FSTabEntry = collections.namedtuple("FSTabEntry", "fs_spec fs_file fs_vfstype fs_mntops fs_freq fs_passno")
 
 
@@ -107,7 +112,7 @@ class QuobyteDevicePrepper(object):
     def prepare_partition(self):
         if "ID_FS_TYPE" in self.device:
             raise Error("File system found on device", self.devname, self.device["ID_FS_TYPE"])
-        if "ID_PART_TABLE_TYPE" in self.device:
+        if "ID_PART_TABLE_TYPE" in self.device and probe_device(self.devname):
             return
         subprocess.check_call(["/sbin/sgdisk", "-n", "1:0:0", self.devname])
         self.refresh()
