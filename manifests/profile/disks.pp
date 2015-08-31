@@ -22,6 +22,7 @@ class quobyte::profile::disks (
 
     exec {"prepare-quobyte-device-${name}":
       command => "/usr/local/bin/prepare-quobyte-device -t ${device_type} ${name}",
+      require => Package['quobyte-server'],
     }
 
   }
@@ -37,6 +38,7 @@ class quobyte::profile::disks (
   if $bootstrap_device {
     exec {"prepare-quobyte-bootstrap-device":
       command => "/usr/local/bin/prepare-quobyte-device -t REGISTRY -b ${bootstrap_device}",
+      require => Package['quobyte-server'],
     }
   }
 
