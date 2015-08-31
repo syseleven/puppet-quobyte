@@ -1,0 +1,222 @@
+#!/usr/bin/env python3
+
+import argparse
+import collections
+import fcntl
+import os
+import pwd
+import pyudev
+import socket
+import subprocess
+import tempfile
+import time
+import uuid
+
+
+QUOBYTE_USER = pwd.getpwnam("quobyte")
+QUOBYTE_DEVICE_TYPES = {
+        "DATA": "DATA_DEVICE",
+        "METADATA": "METADATA_DEVICE",
+        "REGISTRY": "DIR_DEVICE",
+        }
+
+
+PARSER = argparse.ArgumentParser(description="Prepare a block device for Quobyte use")
+PARSER.add_argument("device", nargs="+")
+PARSER.add_argument("--type", "-t", choices=QUOBYTE_DEVICE_TYPES.keys(), required=True)
+PARSER.add_argument("--bootstrap", "-b", action="store_true")
+
+
+class Error(Exception):
+    pass
+
+
+def is_mountpoint(path):
+    rc = subprocess.call(["/bin/mountpoint", "-q", path])
+    return rc == 0
+
+
+def probe_device(path):
+    rc = subprocess.call(["/sbin/blkid", "-p", path])
+    return rc == 0
+
+
+FSTabEntry = collections.namedtuple("FSTabEntry", "fs_spec fs_file fs_vfstype fs_mntops fs_freq fs_passno")
+
+
+class FSTab(object):
+    def __init__(self):
+        self.fstab = open("/etc/fstab", "r")
+        fcntl.flock(self.fstab, fcntl.LOCK_EX)
+        self.lines = list(self.fstab)
+        self.entries = []
+        self.parse()
+
+    def parse(self):
+        for line in self.lines:
+            cleanline = line[:line.find("#")].strip()
+            fields = cleanline.split()
+            if len(fields) > 3:
+                self.entries.append(FSTabEntry(*fields))
+            else:
+                self.entries.append(None)
+
+    def add_entry(self, entry):
+        # Look for existing entry for this fs_spec
+        for i, e in enumerate(self.entries):
+            if e and e.fs_spec == entry.fs_spec:
+                if e != entry:
+                    self.entries[i] = entry
+                    return True
+                else:
+                    return False
+        # Nothing found, append a new entry
+        self.lines.append("# Next line injected by prepare-quobyte-device")
+        self.entries.append(None)
+        self.lines.append("")
+        self.entries.append(entry)
+        return True
+
+    def write(self):
+        f = tempfile.NamedTemporaryFile(mode="w", prefix="fstab.", dir="/etc", delete=False)
+        os.fchmod(f.fileno(), 0o644)
+        for i in range(len(self.lines)):
+            if self.entries[i]:
+                f.write("\t".join(self.entries[i]))
+            else:
+                f.write(self.lines[i].rstrip())
+            f.write("\n")
+        f.flush()
+        os.rename(f.name, "/etc/fstab")
+        f.close()
+
+
+class QuobyteDevicePrepper(object):
+    def __init__(self, devname):
+        self.udev = pyudev.Context()
+        self.devname = devname
+        self.device = None
+        self.fsdevname = None
+        self.fsdevice = None
+        self.mountpoint = None
+        self.refresh()
+
+    def refresh(self):
+        subprocess.check_call(["/sbin/udevadm", "settle"])
+        self.device = pyudev.Device.from_device_file(self.udev, self.devname)
+        self.devname = self.device.device_node
+        if self.fsdevname:
+            self.fsdevice = pyudev.Device.from_device_file(self.udev, self.fsdevname)
+            self.fsdevname = self.fsdevice.device_node
+
+    def prepare_partition(self):
+        if "ID_FS_TYPE" in self.device:
+            raise Error("File system found on device", self.devname, self.device["ID_FS_TYPE"])
+        if "ID_PART_TABLE_TYPE" in self.device and probe_device(self.devname):
+            return
+        subprocess.check_call(["/sbin/sgdisk", "-n", "1:0:0", self.devname])
+        self.refresh()
+
+    def find_partition(self):
+        part = self.udev.list_devices(subsystem="block", parent=self.device, DEVTYPE="partition")
+        self.fsdevice = next(iter(part))
+        self.fsdevname = self.fsdevice.device_node
+        if self.fsdevice["ID_PART_ENTRY_NUMBER"] != "1":
+            raise Error("First partition on device is not partition 1", self.devname, self.fsdevname)
+
+    def prepare_filesystem(self):
+        if "ID_FS_TYPE" in self.fsdevice:
+            if self.fsdevice["ID_FS_TYPE"] == "xfs":
+                return
+            else:
+                raise Error("Non-XFS file system found on device", self.fsdevname)
+        subprocess.check_call(["/sbin/mkfs.xfs", "-i", "size=1024", self.fsdevname])
+        self.refresh()
+
+    def prepare_mountpoint(self):
+        self.mountpoint = os.path.join("/mnt", self.fsdevice["ID_FS_UUID"])
+        if not os.path.exists(self.mountpoint):
+            os.mkdir(self.mountpoint, mode=0o750)
+        if not os.path.isdir(self.mountpoint):
+            raise Error("Mountpoint is not a directory", self.mountpoint)
+        if is_mountpoint(self.mountpoint):
+            return
+        stat = os.stat(self.mountpoint)
+        if (stat.st_uid, stat.st_gid) != (0, 0):
+            os.chown(self.mountpoint, 0, 0)
+        if stat.st_mode & 0o7777 != 0o750:
+            os.chmod(self.mountpoint, 0o750)
+
+    def mount_options(self):
+        if "queue/rotational" not in self.device.attributes or self.device.attributes.asbool("queue/rotational"):
+            return "noatime,nodiratime,logbufs=8,logbsize=256k,largeio,inode64,swalloc,allocsize=131072k"
+        else:
+            return "discard,noatime,nodiratime,logbufs=8,logbsize=256k,largeio,inode64,swalloc"
+
+    def fstab_entry(self):
+        return FSTabEntry("UUID=" + self.fsdevice["ID_FS_UUID"], self.mountpoint, "xfs", self.mount_options(), "0", "2")
+
+    def prepare_fstab(self):
+        fstab = FSTab()
+        if fstab.add_entry(self.fstab_entry()):
+            fstab.write()
+
+    def mount_filesystem(self):
+        if not is_mountpoint(self.mountpoint):
+            subprocess.check_call(["/bin/mount", self.mountpoint])
+        stat = os.stat(self.mountpoint)
+        if stat.st_dev != self.fsdevice.device_number:
+            raise Error("An unexpected file system is mounted on our mountpoint", self.mountpoint)
+        os.chown(self.mountpoint, QUOBYTE_USER.pw_uid, QUOBYTE_USER.pw_gid)
+
+    def device_model(self):
+        if "ID_MODEL" in self.device:
+            if "ID_VENDOR" in self.device:
+                return self.device["ID_VENDOR"] + " " + self.device["ID_MODEL"]
+            else:
+                return self.device["ID_MODEL"]
+        return "unknown"
+
+    def prepare_setupfile(self, devtype, bootstrap):
+        idpath = os.path.join(self.mountpoint, "QUOBYTE_DEV_ID")
+        setuppath = os.path.join(self.mountpoint, "QUOBYTE_DEV_SETUP")
+        if os.path.exists(idpath) or os.path.exists(setuppath):
+            return
+        with open(setuppath, "x") as f:
+            f.write("# Quobyte device identifier file\n")
+            f.write("# Created by prepare-quobyte-device\n")
+            f.write(time.strftime("# %c\n"))
+            f.write("# {}\n".format(socket.getfqdn()))
+            f.write("# {}\n".format(self.fsdevname))
+            f.write("device.serial={}\n".format(uuid.uuid4()))
+            f.write("device.model={}\n".format(self.device_model()))
+            f.write("device.type={}\n".format(QUOBYTE_DEVICE_TYPES[devtype]))
+            if bootstrap and devtype == "REGISTRY":
+                f.write("device.bootstrap=true\n")
+
+    def prepare(self, devtype, bootstrap):
+        if bootstrap and devtype != "REGISTRY":
+            raise Error("Bootstrap devices must be registry devices")
+        if self.device.get("DEVTYPE") not in ("disk", "partition"):
+            raise Error("Not a suitable block device", self.devname)
+        if self.device["DEVTYPE"] == "disk" and "DM_NAME" not in self.device:
+            self.prepare_partition()
+            self.find_partition()
+        else:
+            self.fsdevice = self.device
+            self.fsdevname = self.devname
+        self.prepare_filesystem()
+        self.prepare_mountpoint()
+        self.prepare_fstab()
+        self.mount_filesystem()
+        self.prepare_setupfile(devtype, bootstrap)
+
+
+def main(args):
+    for dev in args.device:
+        worker = QuobyteDevicePrepper(dev)
+        worker.prepare(args.type, args.bootstrap)
+
+if __name__ == "__main__":
+    args = PARSER.parse_args()
+    main(args)

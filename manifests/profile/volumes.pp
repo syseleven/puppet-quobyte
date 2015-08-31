@@ -1,11 +1,8 @@
 # Creates Quobyte volumes and their configurations. It is best to only run this on one machine to avoid race conditions.
 class quobyte::profile::volumes (
   $volumes = {},
-  $public_ip = hiera('quobyte::profile::server::api::public_ip'),
-  $api_port = hiera('quobyte::profile::server::api::api_port'),
+  $api_service = hiera('quobyte::profile::server::api_service'),
   ) {
-    $api_url = "http://${public_ip}:${api_port}"
-
     # Add an appropriately named file (see below) and an entry to this list for new volume configs.
     $volume_configs = ['BASE', 'cinder', 'nova', 'glance']
 
@@ -15,7 +12,7 @@ class quobyte::profile::volumes (
 
     quobyte_volumes{ $volumes_keys:
       volumes => $volumes,
-      api_url => $api_url,
+      api_url => $api_service,
       require => Quobyte_volume_configs[$volume_configs],
     }
 

@@ -1,0 +1,19 @@
+#!/usr/bin/env python3
+
+import pyudev
+import os
+
+
+def main():
+    udev = pyudev.Context()
+    disks = udev.list_devices(subsystem="block", DEVTYPE="disk")
+    for d in disks:
+        # TODO(mzumstrull): If we get NVMe devices, we may need to extend this check.
+        if d.get("ID_BUS") == "scsi":
+            if "queue/nr_requests" in d.attributes and d.attributes.asint("queue/nr_requests") < 4096:
+                path = os.path.join(d.sys_path, "queue/nr_requests")
+                with open(path, "w") as f:
+                    f.write("4096\n")
+
+if __name__ == "__main__":
+    main()
