@@ -3,6 +3,8 @@ class quobyte::profile::volumes (
   $volumes = {},
   $api_service = hiera('quobyte::profile::server::api_service'),
   ) {
+    $api_url = regsubst($api_service, 'admin:quobyte@', '')
+
     # Add an appropriately named file (see below) and an entry to this list for new volume configs.
     $volume_configs = ['BASE', 'cinder', 'nova', 'glance']
 
@@ -12,7 +14,7 @@ class quobyte::profile::volumes (
 
     quobyte_volumes{ $volumes_keys:
       volumes => $volumes,
-      api_url => $api_service,
+      api_url => $api_url,
       require => Quobyte_volume_configs[$volume_configs],
     }
 
