@@ -1,6 +1,7 @@
 class quobyte::profile::disks (
   $diskroles = undef,
   $bootstrap_device = undef,
+  $data_disks_by_model = undef
 ) {
 
   require quobyte::profile::common::tools
@@ -42,4 +43,16 @@ class quobyte::profile::disks (
     }
   }
 
+  define quobyte_data_device() {
+    exec {"prepare-quobyte-device-${name}":
+      command => "/usr/local/bin/prepare-quobyte-device -t DATA ${name}",
+      require => Package['quobyte-server'],
+    }
+  }
+
+  if $data_disks_by_model {
+    validate_array($data_disks_by_model)
+    $disks =  get_devices_by_model($data_disks_by_model)
+    quobyte_data_device { $disks: }
+  }
 }
