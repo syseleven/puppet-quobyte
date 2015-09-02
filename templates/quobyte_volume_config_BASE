@@ -11,8 +11,8 @@ default_config {
     replication_factor: 3
     block_size_bytes: 4096
     object_size_bytes: 8388608
-    striping_method: OBJECT_LEVEL
     segment_size_bytes: 10737418240
+    striping_method: OBJECT_LEVEL
     crc_method: CRC32C
   }
   placement {

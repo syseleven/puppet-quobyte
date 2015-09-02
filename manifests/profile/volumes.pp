@@ -2,6 +2,11 @@
 class quobyte::profile::volumes (
   $volumes = {},
   $api_service = hiera('quobyte::profile::server::api_service'),
+  $cinder_stripe_width = 5,
+  $glance_stripe_width = 1,
+  $nova_stripe_width = 5,
+  $cinder_cache_size = 50,
+  $nova_cache_size = 50,
   ) {
     $api_url = regsubst($api_service, 'admin:quobyte@', '')
 
@@ -24,7 +29,7 @@ class quobyte::profile::volumes (
     define quobyte_volume_configs(
       ) {
         quobyte_volume_config { $name:
-          content => file("$module_name/quobyte_volume_config_$name"),
+          content => template("$module_name/quobyte_volume_config_$name"),
         }
       }
 

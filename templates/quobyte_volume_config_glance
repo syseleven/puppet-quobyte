@@ -1,14 +1,10 @@
-configuration_name: "cinder"
+configuration_name: "glance"
 base_configuration: "BASE"
 default_config {
   file_layout {
-    stripe_width: 5
+    stripe_width: <%= @glance_stripe_width %>
     block_size_bytes: 4096
     object_size_bytes: 8388608
     segment_size_bytes: 10737418240
-  }
-  io_policy {
-    cache_size_in_objects: 50
-    direct_io: DISABLE_ALWAYS
   }
 }
