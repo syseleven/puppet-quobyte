@@ -52,7 +52,7 @@ class quobyte::profile::disks (
 
   if $data_disks_by_model {
     validate_array($data_disks_by_model)
-    $disks = get_devices_by_model($data_disks_by_model)
-    quobyte_data_device { $disks: }
+    $disks_real = get_devices_by_model($data_disks_by_model)
+    quobyte_data_device { $disks_real: }
   }
 }

@@ -9,7 +9,7 @@ module Puppet::Parser::Functions
     blockdevices = lookupvar('blockdevices').split(',')
     blockdevices.each do |blockdevice|
       model = lookupvar("blockdevice_#{blockdevice}_model")
-      Puppet.notice("#{model} - #{model_wanted}")
+      #Puppet.notice("#{model} - #{model_wanted}")
       if model == model_wanted
         ret << "/dev/" + blockdevice
       end
