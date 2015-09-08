@@ -8,7 +8,16 @@ if ((!$#)); then
 fi
 
 quorum=$1
+
+<% if @admin_password -%>
+qmgmt -u <%= @quobyte_api_simple -%> user login admin <%= @admin_password %> >/dev/null
+<% end %>
+
 count=$(timeout 10 qmgmt -u <%= @quobyte_api_simple -%> registry list | wc -l)
+
+<% if @admin_password -%>
+qmgmt -u <%= @quobyte_api_simple -%> user logout >/dev/null
+<% end -%>
 
 if ! [[ $count =~ ^-?[0-9]+$ ]]; then
   echo "UNKOWN - could not get quobyte data"
