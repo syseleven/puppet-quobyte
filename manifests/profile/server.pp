@@ -1,5 +1,4 @@
 class quobyte::profile::server (
-  $api_service = undef,
   $run_registry = false,
   $run_metadata = false,
   $run_data = false,

@@ -1,5 +1,6 @@
 class quobyte::profile::server::config (
   $registry,
+  $api_service = 'http://127.0.0.1:7860',
   $smtp_host = 'localhost',
   $smtp_port = 25,
   $smtp_sender = 'quobyte@localhost',
@@ -14,7 +15,7 @@ class quobyte::profile::server::config (
     owner   => 'root',
     group   => 'quobyte',
     mode    => '0444',
-    content => "# Managed by Puppet\nregistry=${registry}\ndebug.level=6\n",
+    content => template("${module_name}/host.cfg.erb"),
   }
 
   file { '/etc/quobyte/system.cfg':

@@ -26,8 +26,8 @@ assigned to machines in an OpenStack cloud.
 ### Sample Usage with hiera
 
 ```
-quobyte::profile::server::api_service: 'http://user:pass@node1.tld:50000/'
-quobyte::profile::server::config::dir_service: 'node1.tld:50001,node2.tld:50001,node3.tld:50001'
+quobyte::profile::server::config::dir_service: 'node1.tld:7861,node2.tld:7861,node3.tld:7861'
+quobyte::profile::server::config::api_service: 'http://node1.tld:7860'
 quobyte::profile::common::repo::repo_url: 'https://support.quobyte.com/repo/[...]/xUbuntu_14.04'
 quobyte::profile::common::repo::repo_key: '[...]'
 quobyte::profile::common::repo::repo_key_source: 'https://support.quobyte.com/repo/[...]/xUbuntu_14.04/Release.key'
