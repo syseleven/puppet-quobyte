@@ -18,8 +18,9 @@ class quobyte::profile::server::registry::monitoring(
         content => template("$module_name/monitoring/check_quobyte_registry_device_count.erb"),
       }
       sensu::check{'quobyte_registry_device_count':
-        command => "sudo /usr/lib/nagios/plugins/check_quobyte_registry_device_count $quorum",
-        require => File['/usr/lib/nagios/plugins/check_quobyte_registry_device_count'],
+        command     => "sudo /usr/lib/nagios/plugins/check_quobyte_registry_device_count $quorum",
+        occurrences => 3,
+        require     => File['/usr/lib/nagios/plugins/check_quobyte_registry_device_count'],
       }
     }
     false:  { }
