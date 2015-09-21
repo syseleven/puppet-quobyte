@@ -11,8 +11,8 @@ class quobyte::profile::client::monitoring (
         source => "puppet:///modules/$module_name/monitoring/check_quobyte_client_versions",
       }->
       sensu::check{'quobyte_client_versions':
-        command     => '/usr/lib/nagios/plugins/check_quobyte_client_versions',
-        occurrences => 3,
+        command             => '/usr/lib/nagios/plugins/check_quobyte_client_versions',
+        alert_on_occurrence => 3,
       }
     }
     false:  { }
