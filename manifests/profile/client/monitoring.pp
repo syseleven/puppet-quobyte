@@ -14,6 +14,7 @@ class quobyte::profile::client::monitoring (
         command                 => '/usr/lib/nagios/plugins/check_quobyte_client_versions',
         custom                  => {
           'alert_on_occurrence' => 1,
+          'summary'             => 2,
         },
       }
     }
