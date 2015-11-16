@@ -149,9 +149,9 @@ class QuobyteDevicePrepper(object):
 
     def mount_options(self):
         if "queue/rotational" not in self.device.attributes or self.device.attributes.asbool("queue/rotational"):
-            return "noatime,nodiratime,logbufs=8,logbsize=256k,largeio,inode64,swalloc,allocsize=131072k"
+            return "nobootwait,noatime,nodiratime,logbufs=8,logbsize=256k,largeio,inode64,swalloc,allocsize=131072k"
         else:
-            return "discard,noatime,nodiratime,logbufs=8,logbsize=256k,largeio,inode64,swalloc"
+            return "nobootwait,noatime,nodiratime,logbufs=8,logbsize=256k,largeio,inode64,swalloc,discard"
 
     def fstab_entry(self):
         return FSTabEntry("UUID=" + self.fsdevice["ID_FS_UUID"], self.mountpoint, "xfs", self.mount_options(), "0", "2")
