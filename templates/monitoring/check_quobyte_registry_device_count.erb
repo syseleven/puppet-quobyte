@@ -9,24 +9,33 @@ fi
 
 quorum=$1
 
+RC=0
+
 <% if @admin_password -%>
 qmgmt -u <%= @quobyte_api_service -%> user login admin <%= @admin_password %> >/dev/null
 <% end %>
 
-count=$(timeout 10 qmgmt -u <%= @quobyte_api_service -%> registry list | wc -l)
+DEVICES="$(timeout 10 qmgmt -u <%= @quobyte_api_service -%> registry list)"
+count="$(echo "$DEVICES" | wc -w)"
+
+if ((count < quorum)); then
+  echo "WARNING - quobyte registry quorum is $count/$quorum"
+  RC=1
+else
+  echo "OK - quobyte registry quorum is $count/$quorum"
+fi
+
+for DEVID in $DEVICES ; do
+  if timeout 10 qmgmt -u <%= @quobyte_api_service -%> device show "$DEVID" | grep -q 'Status: *ONLINE$' ; then
+    echo "OK - Device $DEVID is online"
+  else
+    echo "WARNING - Device $ DEVID may be offline"
+    RC=1
+  fi
+done
 
 <% if @admin_password -%>
 qmgmt -u <%= @quobyte_api_service -%> user logout >/dev/null
 <% end -%>
 
-if ! [[ $count =~ ^-?[0-9]+$ ]]; then
-  echo "UNKOWN - could not get quobyte data"
-  exit 3
-fi
-
-if ((count < quorum)); then
-  echo "WARNING - quobyte registry quorum is $count/$quorum"
-  exit 1
-else
-  echo "OK - quobyte registry quorum is $count/$quorum"
-fi
+exit $RC
