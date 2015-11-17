@@ -29,8 +29,8 @@ for DEVID in $DEVICES ; do
   if timeout 10 qmgmt -u <%= @quobyte_api_service -%> device show "$DEVID" | grep -q 'Status: *ONLINE$' ; then
     echo "OK - Device $DEVID is online"
   else
-    echo "WARNING - Device $DEVID may be offline"
-    RC=1
+    echo "CRITICAL - Device $DEVID may be offline"
+    RC=2
   fi
 done
 
