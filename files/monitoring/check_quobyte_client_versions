@@ -1,17 +1,27 @@
 #!/usr/bin/env python3
 # 2015, m.zumstrull@syseleven.de
 
-import apt
-import apt_pkg
 import html5lib
+import os
 import requests
+import subprocess
 import sys
 
 NS = {"html": "http://www.w3.org/1999/xhtml"}
 
+QUOBYTE_CLIENT = "/usr/bin/mount.quobyte"
+
 def main():
-    apt_cache = apt.cache.Cache()
-    installed_version = apt_cache["quobyte-client"].installed.version
+    if not os.path.isfile(QUOBYTE_CLIENT):
+        print("WARNING - Quobyte client is not installed")
+        sys.exit(1)
+
+    # HACK For some reason, mount.quobyte considers --version an error.
+    try:
+        output = subprocess.check_output([QUOBYTE_CLIENT, "--version"])
+    except subprocess.CalledProcessError as e:
+        output = e.output
+    installed_version = output.decode().strip().split(None, 1)[1]
     print("OK - Quobyte Client %s is installed" % (installed_version,))
 
     warnings = 0
@@ -26,9 +36,9 @@ def main():
                 key = (tr[0].text or "").strip()
                 val = (tr[1].text or "").strip()
                 clientdata[key] = val
-            running_version = "1:" + clientdata["Quobyte: Release"].split()[0]
-            if apt_pkg.version_compare(running_version, installed_version) < 0:
-                print("WARNING - Client on port %d is running outdated release %s" % (port, clientdata["Quobyte: Release"]))
+            running_version = clientdata["Quobyte: Release"]
+            if running_version != installed_version:
+                print("WARNING - Client on port %d is running different release %s" % (port, running_version))
                 warnings += 1
             else:
                 print("OK - Client on port %d is running release %s" % (port, clientdata["Quobyte: Release"]))
